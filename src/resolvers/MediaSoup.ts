@@ -244,6 +244,13 @@ export class MediaSoup {
     }
   }
 
+   @Query(() => String)
+  async sanityCHck() {
+    console.log(mediaSoup.allProducerTransports);
+    
+    return 'asd'
+  }
+
   
 
   // @Query(() => String)
