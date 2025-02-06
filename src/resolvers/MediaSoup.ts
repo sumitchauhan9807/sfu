@@ -246,7 +246,7 @@ export class MediaSoup {
 
    @Query(() => String)
   async sanityCHck() {
-    console.log(mediaSoup.allProducerTransports);
+    console.log(mediaSoup.rooms);
     
     return 'asd'
   }
