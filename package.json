@@ -44,6 +44,7 @@
     "graphql-scalars": "^1.23.0",
     "jsonwebtoken": "^9.0.2",
     "mediasoup": "^3.15.2",
+    "node-cron": "^3.0.3",
     "pg": "^8.11.5",
     "pubnub": "^8.2.1",
     "reflect-metadata": "^0.2.2",

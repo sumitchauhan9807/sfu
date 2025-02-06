@@ -3,7 +3,7 @@ import path from "path";
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 console.log(path.join(__dirname, "../", ".env"));
 import { ApolloServer } from "@apollo/server";
-
+import {TransportsCheck} from './services/Crons'
 import express from "express";
 import http from "http";
 import cors from "cors";
@@ -14,6 +14,8 @@ import { buildSchema } from "type-graphql";
 import PubNub from "./services/PubNub";
 
 import { MediaSoup } from "./mediasoup/index";
+var cron = require('node-cron');
+
 
 const Main = async () => {
   PubNub.connect();
@@ -80,4 +82,8 @@ export let mediaSoup = new MediaSoup();
 mediaSoup.initMediaSoup().then(() => {
   console.log("Mediasoup class initted successfuly");
   Main();
+  // cron.schedule('*/2 * * * * *', () => {
+  //   console.log("running transport check . . .")
+  //   TransportsCheck()
+  // });
 });

@@ -49,3 +49,12 @@ export class ConsumeMediaReturnType {
   @Field(() => String, { nullable: true })
   rtpParameters: String;
 }
+
+@ObjectType()
+export class OnlineModelsReturnType {
+  @Field(() => String, { nullable: true })
+  username: String;
+
+  @Field(() => Number, { nullable: true })
+  consumers: Number;
+}

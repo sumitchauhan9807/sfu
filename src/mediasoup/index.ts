@@ -34,12 +34,43 @@ export class MediaSoup {
       modelId:modelId,
       transport:transport,
       router:router,
+      bytesReceived:0,
       producer:{
         audio:null,
         video:null
       },
       consumers:[]
     })
+  }
+
+  updateRoomBytesReceived(modelId:String,bytesReceived:Number) {
+    this.rooms = this.rooms.map((room: any) => {
+      if (room.modelId == modelId) {
+        room.bytesReceived = bytesReceived
+      }
+      return room;
+    });
+  }
+
+  updateConsumerBytesSent(modelId:String,clientId:String,bytesSent:Number) {
+    let modelRoom = this.rooms.find((r:any) => r.modelId == modelId )
+    if(!modelRoom) return 
+    let consumers = modelRoom.consumers
+    let findConsumer = consumers.find((r:any) => r.clientId == clientId )
+    if(!findConsumer) return
+    consumers = consumers.map((consumer: any) => {
+      if (consumer.clientId == clientId) {
+        consumer.bytesSent = bytesSent
+      } 
+      return consumer
+    });
+    modelRoom.consumers = consumers
+    this.rooms = this.rooms.map((room: any) => {
+      if (room.modelId == modelId) {
+        return modelRoom
+      }
+      return room;
+    });
   }
 
   addProducer = (transportId: String, producer: any,kind:any) => {
@@ -79,7 +110,8 @@ export class MediaSoup {
       if (room.modelId == modelId) {
         room.consumers.push({
           clientId:clientId,
-          transport:transport
+          transport:transport,
+          bytesSent:0
         })
       }
       return room;

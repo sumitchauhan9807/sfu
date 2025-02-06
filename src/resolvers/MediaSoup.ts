@@ -1,8 +1,8 @@
 import { Resolver, Query, Mutation, Arg } from "type-graphql";
 
-import { RtpCapabilities, CreateProducerTransport ,ConsumeMediaReturnType } from "../types/ReturnTypes";
+import { RtpCapabilities, CreateProducerTransport ,ConsumeMediaReturnType ,OnlineModelsReturnType } from "../types/ReturnTypes";
 import createWebRtcTransport from "../mediasoup/createWebRtcTransport";
-
+import {TransportsCheck} from '../services/Crons'
 import {mediaSoup} from '../index'
 @Resolver()
 export class MediaSoup {
@@ -11,6 +11,18 @@ export class MediaSoup {
   @Query(() => String)
   async hello() {
     return "Hello World!";
+  }
+
+  @Query(() => [OnlineModelsReturnType])
+  async getOnlineModels() {
+    let allOnlineModels = mediaSoup.rooms
+    let returnObj =  allOnlineModels.map((room:any)=>{
+      return {
+        username:room.modelId,
+        consumers:room.consumers.length
+      }
+    })
+    return returnObj
   }
 
 
@@ -245,10 +257,41 @@ export class MediaSoup {
   }
 
    @Query(() => String)
-  async sanityCHck() {
-    console.log(mediaSoup.rooms);
-    
-    return 'asd'
+    async sanityCHck() {
+      console.log(mediaSoup.rooms);
+      return 'asd'
+    }
+
+    @Query(() => String)
+    async transportCronTest() {
+      TransportsCheck()
+      return 'asd'
+    }
+
+  @Query(() => Boolean)
+  async transportMonitor() {
+    let rooms = mediaSoup.rooms
+    if(!rooms.length){ 
+      console.log("NO ROOMS FOUND")
+    }
+    rooms.forEach(async (room:any)=>{
+      console.log("==============================================")
+      let model = room.modelId
+      // console.log(model)
+      let modelTransport = room.transport
+      let stats = await modelTransport.getStats()
+      console.log(`PRODUCER (${model})`, formatBytes(stats[0].bytesSent), formatBytes(stats[0].bytesReceived))
+      
+      let consumers = room.consumers
+      consumers.forEach(async (consumer:any,index:any) => {
+          let transport = consumer.transport
+          let stats = await transport.getStats()
+          console.log(` CONSUMER ${index} (${model})`, formatBytes(stats[0].bytesSent) , formatBytes(stats[0].bytesReceived))
+      });
+      // console.log("==============================================")
+
+    })
+    return true
   }
 
   
@@ -272,37 +315,15 @@ export class MediaSoup {
   // }
 }
 
+function formatBytes(bytes:any, decimals = 2) {
+  bytes = Number(bytes)
+  if (!+bytes) return '0 Bytes'
 
-// try{
-//   thisClientProducer = await thisClientProducerTransport.produce({kind, rtpParameters})
-//   theProducer = thisClientProducer
-//   thisClientProducer.on('transportclose',()=>{
-//       console.log("Producer transport closed. Just fyi")
-//       thisClientProducer.close()
-//   })            
-//   ack(thisClientProducer.id)
-// }catch(error){
-//   console.log(error)
-//   ack("error")
-// }
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
 
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-
-// id: transport.id,
-//         iceParameters: transport.iceParameters,
-//         iceCandidates: transport.iceCandidates,
-//         dtlsParameters: transport.dtlsParameters,
-
-
-// socket.on('connect-transport',async(dtlsParameters, ack)=>{
-//   //get the dtls info from the client, and finish the connection
-//   // on success, send success, on fail, send error
-//   try{
-//       await thisClientProducerTransport.connect(dtlsParameters)
-//       ack("success")
-//   }catch(error){
-//       // something went wrong. Log it, and send back "err"
-//       console.log(error)
-//       ack("error")
-//   }
-// })
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
