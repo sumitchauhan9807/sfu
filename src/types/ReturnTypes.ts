@@ -58,3 +58,12 @@ export class OnlineModelsReturnType {
   @Field(() => Number, { nullable: true })
   consumers: Number;
 }
+
+@ObjectType()
+export class IsModelOnlineReturnType {
+  @Field(() => Boolean, { nullable: true })
+  status: Boolean;
+
+  @Field(() => Number, { defaultValue: 0 })
+  consumers: Number;
+}

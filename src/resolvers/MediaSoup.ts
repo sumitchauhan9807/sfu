@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Arg } from "type-graphql";
 
-import { RtpCapabilities, CreateProducerTransport ,ConsumeMediaReturnType ,OnlineModelsReturnType } from "../types/ReturnTypes";
+import { RtpCapabilities, CreateProducerTransport ,ConsumeMediaReturnType ,OnlineModelsReturnType ,IsModelOnlineReturnType } from "../types/ReturnTypes";
 import createWebRtcTransport from "../mediasoup/createWebRtcTransport";
 import {TransportsCheck} from '../services/Crons'
 import {mediaSoup} from '../index'
@@ -23,6 +23,25 @@ export class MediaSoup {
       }
     })
     return returnObj
+  }
+
+  @Query(() => IsModelOnlineReturnType)
+  async isModelOnline(
+    @Arg("modelId") modelId : string
+  ) {
+    let allOnlineModels = mediaSoup.rooms
+    let consumers = 0
+    let isOnline = false
+    let findModel = allOnlineModels.find((room:any) => room.modelId == modelId)
+    if(findModel) {
+      isOnline = true
+      consumers = findModel.consumers.length
+    }
+    
+    return {
+      status:isOnline,
+      consumers:consumers
+    }
   }
 
 
@@ -96,24 +115,15 @@ export class MediaSoup {
   ) {
     try {
       console.log("START PRODUCING", kind)
-      // let transport = mediaSoup.allProducerTransports.find((t:any) => t.transport.internal.transportId == transportId)
       let transport = mediaSoup.rooms.find((r:any) => r.transport.internal.transportId == transportId )
       if(!transport) throw Error('Transport not found')
       rtpParameters = JSON.parse(rtpParameters)
       let producer = await transport.transport.produce({kind, rtpParameters})
-      producer.on("close", ()=>{
-        console.log("PRODUCER CLODES")
-      })
+     
       mediaSoup.addProducer(transportId,producer,kind)
-    //   producer.on('transportclose',()=>{
-    //     console.log("Producer transport closed. Just fyi")
-    //     producer.close()
-    // })       
-      //       theProducer = thisClientProducer
-      //       thisClientProducer.on('transportclose',()=>{
-      //           console.log("Producer transport closed. Just fyi")
-      //           thisClientProducer.close()
-      //       })  
+      producer.on('transportclose',()=>{
+        console.log("Producer transport closed. Just fyi")
+      })       
       return producer.id
     } catch (e)  {
       console.log(e)
@@ -126,13 +136,13 @@ export class MediaSoup {
     @Arg("clientId") clientId : string,
     @Arg("modelId") modelId : string
   ) {
-    console.log("createConsumerTransport")
     try {
       let modelRoom = mediaSoup.rooms.find((r:any) => r.modelId == modelId )
       if(!modelRoom) throw Error("Room Not Found")
       let findTransport = modelRoom.consumers.find((c:any) => c.clientId == clientId)
       // let findTransports = mediaSoup.allConsumerTransports.filter((t:any)=> t.clientId == clientId)
       if(findTransport) {
+        console.log("REMOVING CONSUMER TRANSPORT")
         mediaSoup.removeConsumerTransport(modelId,clientId)
       }
       const {  transport, clientTransportParams } = await mediaSoup.createWebRtcTransport(modelRoom.router);
@@ -160,8 +170,6 @@ export class MediaSoup {
     @Arg("kind") kind : string
   ) {
     try {
-    console.log("consumeMedia")
-
       rtpCapabilities = JSON.parse(rtpCapabilities)
       let producerRoom = mediaSoup.getProducerTransport(modelId)
       if(!producerRoom) throw Error('Producer Transport Not Found')
@@ -175,8 +183,6 @@ export class MediaSoup {
 
       let producer = producerRoom.producer[kind]
       if(!producer) throw Error(`Producer of type ${kind} Not Found`)
-
-      console.log(producer)
       if(!producer){
         throw Error('Producer Not Found')
       // }else if(!router.canConsume({producerId:producer.id,rtpCapabilities})){
@@ -215,14 +221,14 @@ export class MediaSoup {
     @Arg("clientId") clientId : string,
     @Arg("dtlsParameters") dtlsParameters : string
   ) {
-    console.log("connectConsumerTransport")
+    // console.log("connectConsumerTransport")
     try {
       let producerRoom = mediaSoup.getProducerTransport(modelId)
       if(!producerRoom) throw Error('Producer Transport Not Found')
 
       let consumerTransport = producerRoom.consumers.find((c:any) => c.clientId == clientId)
       if(!consumerTransport) throw Error('Consumer Transport Not Found')
-      console.log(dtlsParameters)
+      // console.log(dtlsParameters)
       dtlsParameters = JSON.parse(dtlsParameters)
       await consumerTransport.transport.connect({dtlsParameters:dtlsParameters})
       return true
@@ -239,15 +245,14 @@ export class MediaSoup {
     @Arg("kind") kind : string,
   ) {
     try {
-      console.log("unpauseConsumer")
       let producerRoom = mediaSoup.getProducerTransport(modelId)
-      console.log(producerRoom)
+      // console.log(producerRoom)
 
       if(!producerRoom) throw Error('Producer Transport Not Found')
 
       let consumerTransport = producerRoom.consumers.find((c:any) => c.clientId == clientId)
       if(!consumerTransport) throw Error('Consumer Transport Not Found')
-      console.log(consumerTransport,"consumerTransport")
+      // console.log(consumerTransport,"consumerTransport")
       await consumerTransport.consumer[kind].resume()
       return true
     } catch (e)  {

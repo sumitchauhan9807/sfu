@@ -122,6 +122,10 @@ export class MediaSoup {
     let findRoom = this.rooms.find((room) => room.modelId == modelId)
     if(!findRoom) return 
     findRoom.transport.close()
+    // removed all consumer transports too !!
+    findRoom.consumers.forEach((consumer:any) => {
+      consumer.transport.close()
+    });
     this.rooms = this.rooms.filter((room: any) => {
       if (room.modelId != modelId) {
         return true;
@@ -189,7 +193,7 @@ export class MediaSoup {
       if(!router) {
         router = await this.getRouter()
       }
-      console.log(router,"routerrouterrouterrouterrouterrouterrouterrouter")
+      // console.log(router,"routerrouterrouterrouterrouterrouterrouterrouter")
       const transport = await router.createWebRtcTransport({
         enableUdp: true,
         enableTcp: true, //always use UDP unless we can't

@@ -82,8 +82,8 @@ export let mediaSoup = new MediaSoup();
 mediaSoup.initMediaSoup().then(() => {
   console.log("Mediasoup class initted successfuly");
   Main();
-  // cron.schedule('*/2 * * * * *', () => {
-  //   console.log("running transport check . . .")
-  //   TransportsCheck()
-  // });
+  cron.schedule('*/10 * * * * *', () => {
+    console.log("running transport check . . .")
+    TransportsCheck()
+  });
 });

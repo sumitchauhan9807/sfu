@@ -20,6 +20,7 @@ export const TransportsCheck = async () => {
       let currentBytesReceived = stats[0].bytesReceived
       if(previousBytesReceived == currentBytesReceived) {
         console.log(model," THIS HAS TO BE REMOVED")
+        // remove producer transport and all sub consumer transports !!!
         mediaSoup.removeRoom(model)
       }else {
         console.log("UPDATING THE BYTES RECEIVED ",formatBytes(stats[0].bytesReceived))
