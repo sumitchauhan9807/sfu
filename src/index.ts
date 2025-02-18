@@ -14,6 +14,7 @@ import { buildSchema } from "type-graphql";
 import PubNub from "./services/PubNub";
 
 import { MediaSoup } from "./mediasoup/index";
+import { Operations } from "./resolvers/Operations";
 var cron = require('node-cron');
 
 
@@ -28,7 +29,7 @@ const Main = async () => {
     typeDefs?: String;
   }
   const schema = await buildSchema({
-    resolvers: [MediaSoupResolver],
+    resolvers: [MediaSoupResolver,Operations],
   });
   const app = express();
   app.use(
@@ -65,7 +66,7 @@ const Main = async () => {
     cors<cors.CorsRequest>({ origin: '*' }),
     express.json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({ token: req.headers.token }),
+      context: async ({ req }) => ({ req: req }),
     })
   );
 

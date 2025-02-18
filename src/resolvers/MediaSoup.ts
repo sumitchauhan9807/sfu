@@ -1,9 +1,10 @@
-import { Resolver, Query, Mutation, Arg } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
 
 import { RtpCapabilities, CreateProducerTransport ,ConsumeMediaReturnType ,OnlineModelsReturnType ,IsModelOnlineReturnType } from "../types/ReturnTypes";
 import createWebRtcTransport from "../mediasoup/createWebRtcTransport";
 import {TransportsCheck} from '../services/Crons'
 import {mediaSoup} from '../index'
+import { isModelAuthed } from "../decorators/auth";
 @Resolver()
 export class MediaSoup {
 
@@ -54,6 +55,7 @@ export class MediaSoup {
   }
 
   @Mutation(() => CreateProducerTransport)
+  @UseMiddleware(isModelAuthed)
   async createProducerTransport(
     @Arg("modelId") modelId : string
   ) {

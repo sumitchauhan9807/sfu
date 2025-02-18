@@ -9,3 +9,9 @@ export type ConsumerTransport = {
   transport?: any;
   consumer?: any;
 };
+
+export enum USER_TYPES {
+  ADMIN = 'ADMIN',
+  MODEL = "MODEL",
+  USER = "USER",
+};
