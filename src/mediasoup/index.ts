@@ -5,6 +5,7 @@ const os = require("os"); //operating system module. part of node
 const mediasoup = require("mediasoup");
 const totalThreads = os.cpus().length; //maximum number of allowed workers
 import {LISTEN_INFOS} from '../constants'
+import {End_Model_Session} from '../services/system'
 // export let workers: any = [];
 // // init router, it's where our 1 router will live
 // export let router: any = null;
@@ -122,6 +123,7 @@ export class MediaSoup {
     let findRoom = this.rooms.find((room) => room.modelId == modelId)
     if(!findRoom) return 
     findRoom.transport.close()
+    End_Model_Session(modelId)
     // removed all consumer transports too !!
     findRoom.consumers.forEach((consumer:any) => {
       consumer.transport.close()

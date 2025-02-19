@@ -6,7 +6,7 @@ export const TransportsCheck = async () => {
     console.log("NO ROOMS FOUND")
   }
   rooms.forEach(async (room:any)=>{
-    console.log(room)
+    // console.log(room)
     let model = room.modelId
     // console.log(model)
     let bytesReceived = room.bytesReceived
