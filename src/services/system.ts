@@ -40,7 +40,7 @@ export const End_Model_Session = async (modelId: String) => {
     // console.log(e.cause.result,"ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
     // console.log("1111111111111111111111111111111111111111111")
 
-    // console.log(e.cause.message,"Asdasdasdasd")
+    console.log(e.cause.message,"Asdasdasdasd")
     return e.cause.message
   }
 };
