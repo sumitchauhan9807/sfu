@@ -47,7 +47,7 @@ export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
     // console.log(e.cause.result,"ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
     // console.log("1111111111111111111111111111111111111111111")
 
-    console.log(e,"Asdasdasdasd")
+    console.log(e.cause.message,"Asdasdasdasd")
     return e.cause.message
   }
 }
