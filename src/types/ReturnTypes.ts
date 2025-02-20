@@ -33,6 +33,9 @@ export class CreateProducerTransport {
 
   @Field(() => String, { nullable: true })
   dtlsParameters: String;
+
+  @Field(() => String, { nullable: true })
+  sessionId: String;
 }
 
 @ObjectType()

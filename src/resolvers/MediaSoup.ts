@@ -146,6 +146,7 @@ export class MediaSoup {
       let modelRoom = mediaSoup.rooms.find((r:any) => r.modelId == modelId )
       if(!modelRoom) throw Error("Room Not Found")
       let findTransport = modelRoom.consumers.find((c:any) => c.clientId == clientId)
+      let sessionId = modelRoom.sessionId
       // let findTransports = mediaSoup.allConsumerTransports.filter((t:any)=> t.clientId == clientId)
       if(findTransport) {
         console.log("REMOVING CONSUMER TRANSPORT")
@@ -161,6 +162,7 @@ export class MediaSoup {
         iceParameters : JSON.stringify(clientTransportParams.iceParameters),
         iceCandidates : JSON.stringify(clientTransportParams.iceCandidates),
         dtlsParameters : JSON.stringify(clientTransportParams.dtlsParameters),
+        sessionId:sessionId
       };
     } catch (e)  {
       console.log(e)
