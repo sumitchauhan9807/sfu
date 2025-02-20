@@ -36,7 +36,7 @@ export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
     let { data ,errors } = await client.mutate({
       mutation: SYSTEM_CHECK_SESSION_ACTIVE,
       variables: {
-        modelId:sessionId,
+        sessionId:sessionId,
         authToken: CROSS_SERVER_AUTH_TOKEN
       }
     });
