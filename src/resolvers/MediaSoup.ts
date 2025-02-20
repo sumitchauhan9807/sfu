@@ -70,7 +70,7 @@ export class MediaSoup {
       //   mediaSoup.removeProducerTransports(modelId)
       // }
       let isSessionActive = await CHECK_LIVE_SESSION_ACTIVE(sessionId)
-      if(isSessionActive) throw Error("session is not active anymore")
+      if(!isSessionActive) throw Error("session is not active anymore")
       mediaSoup.removeRoom(modelId)
       const {  router, transport, clientTransportParams } = await mediaSoup.createWebRtcTransport();
       mediaSoup.addRoom(modelId,sessionId,transport,router)
