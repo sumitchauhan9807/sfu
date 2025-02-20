@@ -5,7 +5,7 @@ import createWebRtcTransport from "../mediasoup/createWebRtcTransport";
 import {TransportsCheck} from '../services/Crons'
 import {mediaSoup} from '../index'
 import { isModelAuthed } from "../decorators/auth";
-import { CHECK_LIVE_SESSION_ACTIVE } from "src/services/system";
+import { CHECK_LIVE_SESSION_ACTIVE } from "../services/system";
 @Resolver()
 export class MediaSoup {
 
