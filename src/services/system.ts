@@ -24,7 +24,7 @@ const SYSTEM_END_MODEL_SESSION = gql`
 `;
 
 const SYSTEM_CHECK_SESSION_ACTIVE = gql`
-  mutation system_check_session_active($sessionId:String!,$authToken:String!) {
+  query system_check_session_active($sessionId:String!,$authToken:String!) {
     system_check_session_active(sessionId:$sessionId,authToken:$authToken)
   }
 `;
@@ -33,8 +33,8 @@ const SYSTEM_CHECK_SESSION_ACTIVE = gql`
 export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
   console.log("HEREEEEEEEEEEEEEEEEEEE")
   try {
-    let { data ,errors } = await client.mutate({
-      mutation: SYSTEM_CHECK_SESSION_ACTIVE,
+    let { data ,errors } = await client.query({
+      query: SYSTEM_CHECK_SESSION_ACTIVE,
       variables: {
         sessionId:sessionId,
         authToken: CROSS_SERVER_AUTH_TOKEN
