@@ -24,7 +24,7 @@ const SYSTEM_END_MODEL_SESSION = gql`
 `;
 
 const SYSTEM_CHECK_SESSION_ACTIVE = gql`
-  query system_check_session_active($sessionId:String!,$authToken:String!) {
+  query system_check_session_active($sessionId:Float!,$authToken:String!) {
     system_check_session_active(sessionId:$sessionId,authToken:$authToken)
   }
 `;
@@ -36,7 +36,7 @@ export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
     let { data ,errors } = await client.query({
       query: SYSTEM_CHECK_SESSION_ACTIVE,
       variables: {
-        sessionId:sessionId,
+        sessionId:Number(sessionId),
         authToken: CROSS_SERVER_AUTH_TOKEN
       }
     });
