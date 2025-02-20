@@ -1,4 +1,5 @@
 import {mediaSoup} from '../index'
+import { End_Model_Session } from './system'
 
 export const TransportsCheck = async () => {
   let rooms = mediaSoup.rooms
@@ -20,6 +21,7 @@ export const TransportsCheck = async () => {
       let currentBytesReceived = stats[0].bytesReceived
       if(previousBytesReceived == currentBytesReceived) {
         console.log(model," THIS HAS TO BE REMOVED")
+        End_Model_Session(model)
         // remove producer transport and all sub consumer transports !!!
         mediaSoup.removeRoom(model)
       }else {
