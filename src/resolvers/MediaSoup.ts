@@ -5,6 +5,7 @@ import createWebRtcTransport from "../mediasoup/createWebRtcTransport";
 import {TransportsCheck} from '../services/Crons'
 import {mediaSoup} from '../index'
 import { isModelAuthed } from "../decorators/auth";
+import { CHECK_LIVE_SESSION_ACTIVE } from "src/services/system";
 @Resolver()
 export class MediaSoup {
 
@@ -57,7 +58,8 @@ export class MediaSoup {
   @Mutation(() => CreateProducerTransport)
   @UseMiddleware(isModelAuthed)
   async createProducerTransport(
-    @Arg("modelId") modelId : string
+    @Arg("modelId") modelId : string,
+    @Arg("sessionId") sessionId : string
   ) {
     try {
       // let findTransports = mediaSoup.allProducerTransports.filter((t:any)=> t.modelId == modelId)
@@ -67,9 +69,11 @@ export class MediaSoup {
       //   });
       //   mediaSoup.removeProducerTransports(modelId)
       // }
+      let isSessionActive = await CHECK_LIVE_SESSION_ACTIVE(sessionId)
+      if(isSessionActive) throw Error("session is not active anymore")
       mediaSoup.removeRoom(modelId)
       const {  router, transport, clientTransportParams } = await mediaSoup.createWebRtcTransport();
-      mediaSoup.addRoom(modelId,transport,router)
+      mediaSoup.addRoom(modelId,sessionId,transport,router)
       // mediaSoup.addProducerTransport(modelId,transport);
       // console.log(clientTransportParams)
       // console.log(transport.internal)
@@ -81,7 +85,7 @@ export class MediaSoup {
         dtlsParameters : JSON.stringify(clientTransportParams.dtlsParameters),
       };
     } catch (e)  {
-      throw new Error(e)
+      return e
     }
   }
 

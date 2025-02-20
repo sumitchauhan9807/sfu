@@ -29,9 +29,10 @@ export class MediaSoup {
     await this.createWorkers();
   }
 
-  addRoom(modelId:String,transport:any,router:any) {
+  addRoom(modelId:String,sessionId:any,transport:any,router:any) {
     this.rooms.push({
       modelId:modelId,
+      sessionId:sessionId,
       transport:transport,
       router:router,
       bytesReceived:0,

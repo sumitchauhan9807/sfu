@@ -23,6 +23,35 @@ const SYSTEM_END_MODEL_SESSION = gql`
   }
 `;
 
+const SYSTEM_CHECK_SESSION_ACTIVE = gql`
+  mutation system_check_session_active($sessionId:String!,$authToken:String!) {
+    system_check_session_active(sessionId:$sessionId,authToken:$authToken)
+  }
+`;
+
+
+export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
+  console.log("HEREEEEEEEEEEEEEEEEEEE")
+  try {
+    let { data ,errors } = await client.mutate({
+      mutation: SYSTEM_CHECK_SESSION_ACTIVE,
+      variables: {
+        modelId:sessionId,
+        authToken: CROSS_SERVER_AUTH_TOKEN
+      }
+    });
+    // console.log(errors,"ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+    return data.system_check_session_active
+  }catch(e) {
+    // console.log("1111111111111111111111111111111111111111111")
+    // console.log(e.cause.result,"ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+    // console.log("1111111111111111111111111111111111111111111")
+
+    console.log(e,"Asdasdasdasd")
+    return e.cause.message
+  }
+}
+
 export const End_Model_Session = async (modelId: String) => {
   console.log("HEREEEEEEEEEEEEEEEEEEE")
   try {
