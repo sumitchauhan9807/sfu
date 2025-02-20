@@ -35,6 +35,7 @@ export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
   try {
     let { data ,errors } = await client.query({
       query: SYSTEM_CHECK_SESSION_ACTIVE,
+      fetchPolicy:"no-cache",
       variables: {
         sessionId:Number(sessionId),
         authToken: CROSS_SERVER_AUTH_TOKEN
@@ -58,6 +59,7 @@ export const End_Model_Session = async (modelId: String) => {
   try {
     let { data ,errors } = await client.mutate({
       mutation: SYSTEM_END_MODEL_SESSION,
+      fetchPolicy:"no-cache",
       variables: {
         modelId:modelId,
         authToken: CROSS_SERVER_AUTH_TOKEN
