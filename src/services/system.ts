@@ -40,7 +40,7 @@ export const CHECK_LIVE_SESSION_ACTIVE = async (sessionId:string) => {
         authToken: CROSS_SERVER_AUTH_TOKEN
       }
     });
-    // console.log(errors,"ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+    console.log(data.system_check_session_active,"data.system_check_session_active")
     return data.system_check_session_active
   }catch(e) {
     // console.log("1111111111111111111111111111111111111111111")
